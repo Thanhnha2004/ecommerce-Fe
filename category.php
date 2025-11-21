@@ -58,13 +58,27 @@
     <div class="sidebar">
         <div class="brand">Admin Panel</div>
         <nav>
-            <a href="dashboard.html"><i class="fas fa-chart-line me-2"></i> Dashboard</a>
-            <a href="products.html"><i class="fas fa-box me-2"></i> Quản lý sản phẩm</a>
-            <a href="brands.html"><i class="fas fa-tag me-2"></i> Quản lý thương hiệu</a>
-            <a href="orders.html"><i class="fas fa-shopping-cart me-2"></i> Quản lý đơn hàng</a>
-            <a href="users.html"><i class="fas fa-users me-2"></i> Quản lý tài khoản</a>
-            <a href="categories.html" class="active"><i class="fas fa-list me-2"></i> Quản lý loại sản phẩm</a>
-            <a href="#"><i class="fas fa-sign-out-alt me-2"></i> Đăng xuất</a>
+            <a href="dashboard.php">
+                <i class="fas fa-chart-line me-2"></i> Dashboard
+            </a>
+            <a href="product.php">
+                <i class="fas fa-box me-2"></i> Quản lý sản phẩm
+            </a>
+            <a href="brand.php">
+                <i class="fas fa-tag me-2"></i> Quản lý thương hiệu
+            </a>
+            <a href="order.php">
+                <i class="fas fa-shopping-cart me-2"></i> Quản lý đơn hàng
+            </a>
+            <a href="user.php">
+                <i class="fas fa-users me-2"></i> Quản lý tài khoản
+            </a>
+            <a href="category.php" class="active">
+                <i class="fas fa-list me-2"></i> Quản lý loại sản phẩm
+            </a>
+            <a href="#" class="text-danger">
+                <i class="fas fa-sign-out-alt me-2"></i> Đăng xuất
+            </a>
         </nav>
     </div>
 

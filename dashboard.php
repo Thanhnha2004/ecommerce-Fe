@@ -99,26 +99,23 @@
     <div class="sidebar">
         <div class="brand">Admin Panel</div>
         <nav>
-            <a href="#" class="active">
+            <a href="dashboard.php" class="active">
+                <i class="fas fa-chart-line me-2"></i> Dashboard
+            </a>
+            <a href="product.php">
                 <i class="fas fa-box me-2"></i> Quản lý sản phẩm
             </a>
-            <a href="#">
+            <a href="brand.php">
                 <i class="fas fa-tag me-2"></i> Quản lý thương hiệu
             </a>
-            <a href="#">
+            <a href="order.php">
                 <i class="fas fa-shopping-cart me-2"></i> Quản lý đơn hàng
             </a>
-            <a href="#">
+            <a href="user.php">
                 <i class="fas fa-users me-2"></i> Quản lý tài khoản
             </a>
-            <a href="#">
+            <a href="category.php">
                 <i class="fas fa-list me-2"></i> Quản lý loại sản phẩm
-            </a>
-            <a href="#">
-                <i class="fas fa-ticket-alt me-2"></i> Quản lý mã khuyến mãi
-            </a>
-            <a href="#">
-                <i class="fas fa-envelope me-2"></i> Quản lý liên hệ
             </a>
             <a href="#" class="text-danger">
                 <i class="fas fa-sign-out-alt me-2"></i> Đăng xuất
@@ -244,7 +241,8 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        const API_BASE_URL = 'http://127.0.0.1:8000/admin';
+        // Thay đổi URL này nếu Laravel chạy ở port khác
+        const API_BASE_URL = 'http://localhost:8000/admin';
 
         // Format currency
         function formatCurrency(amount) {
@@ -253,14 +251,36 @@
 
         // Show error
         function showError(message) {
-            document.getElementById('error-message').textContent = message;
+            document.getElementById('error-message').innerHTML = message;
             document.getElementById('error-alert').classList.remove('d-none');
             document.getElementById('loading').classList.add('d-none');
+        }
+
+        // Test API connection
+        async function testAPIConnection() {
+            try {
+                console.log('Testing API connection to:', API_BASE_URL);
+                const response = await fetch(`${API_BASE_URL}/users`);
+                console.log('Response status:', response.status);
+                console.log('Response ok:', response.ok);
+                return response.ok;
+            } catch (error) {
+                console.error('API Connection Error:', error);
+                return false;
+            }
         }
 
         // Fetch dashboard data
         async function fetchDashboardData() {
             try {
+                console.log('Fetching dashboard data...');
+                
+                // Test connection first
+                const isConnected = await testAPIConnection();
+                if (!isConnected) {
+                    throw new Error('Không thể kết nối đến API');
+                }
+
                 // Fetch all data in parallel
                 const [usersRes, productsRes, ordersRes] = await Promise.all([
                     fetch(`${API_BASE_URL}/users`),
@@ -268,14 +288,22 @@
                     fetch(`${API_BASE_URL}/orders`)
                 ]);
 
+                console.log('Users response:', usersRes.status);
+                console.log('Products response:', productsRes.status);
+                console.log('Orders response:', ordersRes.status);
+
                 // Check if all requests succeeded
                 if (!usersRes.ok || !productsRes.ok || !ordersRes.ok) {
-                    throw new Error('Không thể kết nối đến API. Vui lòng kiểm tra server.');
+                    throw new Error('Một số API endpoint không phản hồi');
                 }
 
                 const usersData = await usersRes.json();
                 const productsData = await productsRes.json();
                 const ordersData = await ordersRes.json();
+
+                console.log('Users data:', usersData);
+                console.log('Products data:', productsData);
+                console.log('Orders data:', ordersData);
 
                 // Calculate totals
                 const totalUsers = usersData.data?.total || usersData.data?.length || 0;
@@ -302,14 +330,27 @@
                 document.getElementById('loading').classList.add('d-none');
                 document.getElementById('stats-container').classList.remove('d-none');
 
+                console.log('Dashboard data loaded successfully!');
+
             } catch (error) {
                 console.error('Error fetching data:', error);
-                showError('Không thể tải dữ liệu. Vui lòng kiểm tra kết nối API và đảm bảo server đang chạy.');
+                showError(`
+                    <strong>Lỗi kết nối API!</strong><br>
+                    <small>Chi tiết: ${error.message}</small><br><br>
+                    <strong>Các bước kiểm tra:</strong><br>
+                    1. Đảm bảo Laravel server đang chạy: <code>php artisan serve</code><br>
+                    2. Kiểm tra URL API: <code>${API_BASE_URL}</code><br>
+                    3. Kiểm tra CORS trong file <code>config/cors.php</code><br>
+                    4. Xem Console (F12) để biết thêm chi tiết
+                `);
             }
         }
 
         // Load data when page loads
-        document.addEventListener('DOMContentLoaded', fetchDashboardData);
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('Page loaded, fetching dashboard data...');
+            fetchDashboardData();
+        });
     </script>
 </body>
 </html>
