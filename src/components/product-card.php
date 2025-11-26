@@ -1,7 +1,7 @@
 <?php
 function renderProductCard($product, $cardClass = '') {
     ?>
-    <div class="makeup-card position-relative <?= $cardClass ?>">
+    <div class="makeup-card position-relative <?= $cardClass ?>" onclick="window.location.href='product-detail.php?id=<?= $product['id'] ?>'">
         <div class="border border-3 rounded mb-2" style="border-color: #9c27b0 !important;">
             <img src="http://localhost:8000/storage/<?= $product['image'] ?>" alt="<?= $product['name'] ?>" class="img-fluid">
         </div>
