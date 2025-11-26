@@ -3,7 +3,7 @@ function renderProductCard($product, $cardClass = '') {
     ?>
     <div class="makeup-card position-relative <?= $cardClass ?>">
         <div class="border border-3 rounded mb-2" style="border-color: #9c27b0 !important;">
-            <img src="http://localhost:8000/storage/app/public/<?= $product['image'] ?>" alt="<?= $product['name'] ?>" class="img-fluid">
+            <img src="http://localhost:8000/storage/<?= $product['image'] ?>" alt="<?= $product['name'] ?>" class="img-fluid">
         </div>
         <div class="text-start">
             <div class="fw-bold text-danger mb-1">

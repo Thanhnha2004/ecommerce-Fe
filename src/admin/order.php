@@ -56,7 +56,6 @@
         .status-3 { background-color: #e0e7ff; color: #3730a3; }
         .status-4 { background-color: #d1fae5; color: #065f46; }
         .status-5 { background-color: #fee2e2; color: #991b1b; }
-        .modal-backdrop.show { opacity: 0.5; }
     </style>
 </head>
 <body>
@@ -181,7 +180,6 @@
     <script>
         const API_BASE_URL = 'http://localhost:8000/admin';
 
-        // Show alert
         function showAlert(message, type = 'success') {
             const alert = `
                 <div class="alert alert-${type} alert-dismissible fade show" role="alert">
@@ -194,15 +192,10 @@
             }, 3000);
         }
 
-        // Format currency
         function formatCurrency(amount) {
-            return new Intl.NumberFormat('vi-VN', {
-                style: 'currency',
-                currency: 'VND'
-            }).format(amount);
+            return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(amount);
         }
 
-        // Get status badge
         function getStatusBadge(status) {
             const statusMap = {
                 1: { text: 'Chờ xử lý', class: 'status-1' },
@@ -215,7 +208,6 @@
             return `<span class="badge-status ${s.class}">${s.text}</span>`;
         }
 
-        // Load orders
         async function loadOrders() {
             try {
                 document.getElementById('loading').classList.remove('d-none');
@@ -268,13 +260,11 @@
                 document.getElementById('orders-table').classList.remove('d-none');
 
             } catch (error) {
-                console.error('Error:', error);
                 showAlert('Lỗi khi tải dữ liệu: ' + error.message, 'danger');
                 document.getElementById('loading').classList.add('d-none');
             }
         }
 
-        // View order details
         async function viewOrder(id) {
             try {
                 const response = await fetch(`${API_BASE_URL}/orders/${id}`);
@@ -283,15 +273,9 @@
 
                 let itemsHtml = '';
                 if (order.items && order.items.length > 0) {
-                    itemsHtml = '<h6 class="mt-3">Chi tiết sản phẩm:</h6><table class="table table-sm">';
-                    itemsHtml += '<thead><tr><th>Sản phẩm</th><th>SL</th><th>Đơn giá</th><th>Tổng</th></tr></thead><tbody>';
+                    itemsHtml = '<h6 class="mt-3">Chi tiết sản phẩm:</h6><table class="table table-sm"><thead><tr><th>Sản phẩm</th><th>SL</th><th>Đơn giá</th><th>Tổng</th></tr></thead><tbody>';
                     order.items.forEach(item => {
-                        itemsHtml += `<tr>
-                            <td>${item.product?.name || 'N/A'}</td>
-                            <td>${item.quantity}</td>
-                            <td>${formatCurrency(item.price)}</td>
-                            <td><strong>${formatCurrency(item.price * item.quantity)}</strong></td>
-                        </tr>`;
+                        itemsHtml += `<tr><td>${item.product?.name || 'N/A'}</td><td>${item.quantity}</td><td>${formatCurrency(item.price)}</td><td><strong>${formatCurrency(item.price * item.quantity)}</strong></td></tr>`;
                     });
                     itemsHtml += '</tbody></table>';
                 }
@@ -310,8 +294,7 @@
                         </div>
                     </div>
                     ${order.note ? `<p><strong>Ghi chú:</strong> ${order.note}</p>` : ''}
-                    ${itemsHtml}
-                `;
+                    ${itemsHtml}`;
 
                 new bootstrap.Modal(document.getElementById('viewOrderModal')).show();
             } catch (error) {
@@ -319,14 +302,12 @@
             }
         }
 
-        // Open update status modal
         function openUpdateStatus(id, currentStatus) {
             document.getElementById('update-order-id').value = id;
             document.getElementById('update-status').value = currentStatus;
             new bootstrap.Modal(document.getElementById('updateStatusModal')).show();
         }
 
-        // Update order status
         async function updateOrderStatus() {
             try {
                 const id = document.getElementById('update-order-id').value;
@@ -348,14 +329,11 @@
             }
         }
 
-        // Delete order
         async function deleteOrder(id) {
             if (!confirm('Bạn có chắc muốn xóa đơn hàng này?')) return;
 
             try {
-                const response = await fetch(`${API_BASE_URL}/orders/${id}`, {
-                    method: 'DELETE'
-                });
+                const response = await fetch(`${API_BASE_URL}/orders/${id}`, { method: 'DELETE' });
 
                 if (!response.ok) throw new Error('Xóa thất bại');
 
@@ -366,10 +344,7 @@
             }
         }
 
-        // Load on page load
         document.addEventListener('DOMContentLoaded', loadOrders);
-
-        // Search on Enter
         document.getElementById('search-input').addEventListener('keypress', (e) => {
             if (e.key === 'Enter') loadOrders();
         });

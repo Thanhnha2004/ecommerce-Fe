@@ -164,7 +164,6 @@
         const API_BASE_URL = 'http://localhost:8000/admin';
         let currentCategoryModal = null;
 
-        // Show alert
         function showAlert(message, type = 'success') {
             const alert = `
                 <div class="alert alert-${type} alert-dismissible fade show" role="alert">
@@ -177,7 +176,6 @@
             }, 3000);
         }
 
-        // Load categories
         async function loadCategories() {
             try {
                 document.getElementById('loading').classList.remove('d-none');
@@ -206,13 +204,13 @@
                                 <td><strong>${category.name}</strong></td>
                                 <td>${description}</td>
                                 <td>
-                                    <button class="btn btn-sm btn-info" onclick="viewCategory(${category.id})" title="Xem chi tiết">
+                                    <button class="btn btn-sm btn-info" onclick="viewCategory(${category.id})">
                                         <i class="fas fa-eye"></i>
                                     </button>
-                                    <button class="btn btn-sm btn-warning" onclick="editCategory(${category.id})" title="Sửa">
+                                    <button class="btn btn-sm btn-warning" onclick="editCategory(${category.id})">
                                         <i class="fas fa-edit"></i>
                                     </button>
-                                    <button class="btn btn-sm btn-danger" onclick="deleteCategory(${category.id})" title="Xóa">
+                                    <button class="btn btn-sm btn-danger" onclick="deleteCategory(${category.id})">
                                         <i class="fas fa-trash"></i>
                                     </button>
                                 </td>
@@ -225,13 +223,11 @@
                 document.getElementById('categories-table').classList.remove('d-none');
 
             } catch (error) {
-                console.error('Error:', error);
                 showAlert('Lỗi khi tải dữ liệu: ' + error.message, 'danger');
                 document.getElementById('loading').classList.add('d-none');
             }
         }
 
-        // Open add modal
         function openAddModal() {
             document.getElementById('modal-title').textContent = 'Thêm Loại sản phẩm';
             document.getElementById('category-form').reset();
@@ -240,7 +236,6 @@
             currentCategoryModal.show();
         }
 
-        // View category details
         async function viewCategory(id) {
             try {
                 const response = await fetch(`${API_BASE_URL}/categories/${id}`);
@@ -249,19 +244,9 @@
 
                 let productsHtml = '';
                 if (category.products && category.products.length > 0) {
-                    productsHtml = `
-                        <h6 class="mt-4">Sản phẩm thuộc loại này (${category.products.length}):</h6>
-                        <div class="list-group">
-                    `;
+                    productsHtml = `<h6 class="mt-4">Sản phẩm thuộc loại này (${category.products.length}):</h6><div class="list-group">`;
                     category.products.slice(0, 10).forEach(product => {
-                        productsHtml += `
-                            <div class="list-group-item">
-                                <div class="d-flex justify-content-between">
-                                    <span>${product.name}</span>
-                                    <span class="badge bg-primary">${product.price?.toLocaleString('vi-VN')} đ</span>
-                                </div>
-                            </div>
-                        `;
+                        productsHtml += `<div class="list-group-item"><div class="d-flex justify-content-between"><span>${product.name}</span><span class="badge bg-primary">${product.price?.toLocaleString('vi-VN')} đ</span></div></div>`;
                     });
                     productsHtml += '</div>';
                     if (category.products.length > 10) {
@@ -279,8 +264,7 @@
                             <p><strong>Mô tả:</strong> ${category.description || '<span class="text-muted">Chưa có mô tả</span>'}</p>
                         </div>
                     </div>
-                    ${productsHtml}
-                `;
+                    ${productsHtml}`;
 
                 new bootstrap.Modal(document.getElementById('viewCategoryModal')).show();
             } catch (error) {
@@ -288,7 +272,6 @@
             }
         }
 
-        // Edit category
         async function editCategory(id) {
             try {
                 const response = await fetch(`${API_BASE_URL}/categories/${id}`);
@@ -307,7 +290,6 @@
             }
         }
 
-        // Save category
         async function saveCategory() {
             try {
                 const id = document.getElementById('category-id').value;
@@ -319,18 +301,13 @@
                     return;
                 }
 
-                const data = { 
-                    name: name,
-                    description: description || null
-                };
-                
                 const url = id ? `${API_BASE_URL}/categories/${id}` : `${API_BASE_URL}/categories`;
                 const method = id ? 'PUT' : 'POST';
 
                 const response = await fetch(url, {
                     method: method,
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(data)
+                    body: JSON.stringify({ name, description: description || null })
                 });
 
                 if (!response.ok) {
@@ -346,14 +323,11 @@
             }
         }
 
-        // Delete category
         async function deleteCategory(id) {
             if (!confirm('Bạn có chắc muốn xóa loại sản phẩm này?\n\nLưu ý: Không thể xóa nếu có sản phẩm đang thuộc loại này.')) return;
 
             try {
-                const response = await fetch(`${API_BASE_URL}/categories/${id}`, {
-                    method: 'DELETE'
-                });
+                const response = await fetch(`${API_BASE_URL}/categories/${id}`, { method: 'DELETE' });
 
                 if (!response.ok) {
                     const error = await response.json();
@@ -367,7 +341,6 @@
             }
         }
 
-        // Search functionality
         let searchTimeout;
         document.getElementById('search-input').addEventListener('input', (e) => {
             clearTimeout(searchTimeout);
@@ -387,7 +360,6 @@
             }, 300);
         });
 
-        // Load on page load
         document.addEventListener('DOMContentLoaded', loadCategories);
     </script>
 </body>

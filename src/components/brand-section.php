@@ -12,7 +12,7 @@ function renderBrandSection($title, $brands, $viewAllLink = '#')
             <?php foreach ($brands as $brand): ?>
                 <div class="col-2 d-flex brand flex-column justify-content-between align-items-center">
                     <a href="<?= $brand['link'] ?? '#' ?>" class="text-decoration-none"></a>
-                    <img src="../uploads/brand/<?= $brand['image'] ?>" class="img-fluid" />
+                    <img src="http://localhost:8000/storage/<?= $brand['image'] ?>" class="img-fluid" />
                     <p class="card-text text-dark mt-1 mb-0 fw-bold">
                         <?= $brand['brand_name'] ?>
                     </p>

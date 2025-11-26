@@ -181,7 +181,6 @@
     <script>
         const API_BASE_URL = 'http://localhost:8000/admin';
 
-        // Show alert
         function showAlert(message, type = 'success') {
             const alert = `
                 <div class="alert alert-${type} alert-dismissible fade show" role="alert">
@@ -194,7 +193,6 @@
             }, 3000);
         }
 
-        // Get role badge
         function getRoleBadge(role) {
             if (role === 2) {
                 return '<span class="badge-role role-admin"><i class="fas fa-crown me-1"></i>Admin</span>';
@@ -202,7 +200,6 @@
             return '<span class="badge-role role-user"><i class="fas fa-user me-1"></i>Người dùng</span>';
         }
 
-        // Load users
         async function loadUsers() {
             try {
                 document.getElementById('loading').classList.remove('d-none');
@@ -236,13 +233,13 @@
                                 <td>${user.fullname || '<span class="text-muted">Chưa cập nhật</span>'}</td>
                                 <td>${getRoleBadge(user.role)}</td>
                                 <td>
-                                    <button class="btn btn-sm btn-info" onclick="viewUser(${user.id})" title="Xem chi tiết">
+                                    <button class="btn btn-sm btn-info" onclick="viewUser(${user.id})">
                                         <i class="fas fa-eye"></i>
                                     </button>
-                                    <button class="btn btn-sm btn-warning" onclick="editUser(${user.id})" title="Sửa">
+                                    <button class="btn btn-sm btn-warning" onclick="editUser(${user.id})">
                                         <i class="fas fa-edit"></i>
                                     </button>
-                                    <button class="btn btn-sm btn-danger" onclick="deleteUser(${user.id})" title="Xóa">
+                                    <button class="btn btn-sm btn-danger" onclick="deleteUser(${user.id})">
                                         <i class="fas fa-trash"></i>
                                     </button>
                                 </td>
@@ -255,13 +252,11 @@
                 document.getElementById('users-table').classList.remove('d-none');
 
             } catch (error) {
-                console.error('Error:', error);
                 showAlert('Lỗi khi tải dữ liệu: ' + error.message, 'danger');
                 document.getElementById('loading').classList.add('d-none');
             }
         }
 
-        // View user details
         async function viewUser(id) {
             try {
                 const response = await fetch(`${API_BASE_URL}/users/${id}`);
@@ -270,40 +265,12 @@
 
                 let ordersHtml = '';
                 if (user.orders && user.orders.length > 0) {
-                    ordersHtml = `
-                        <h6 class="mt-4">Lịch sử đơn hàng (${user.orders.length}):</h6>
-                        <div class="table-responsive">
-                            <table class="table table-sm">
-                                <thead>
-                                    <tr>
-                                        <th>Mã đơn</th>
-                                        <th>Tổng tiền</th>
-                                        <th>Trạng thái</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                    `;
+                    ordersHtml = `<h6 class="mt-4">Lịch sử đơn hàng (${user.orders.length}):</h6><div class="table-responsive"><table class="table table-sm"><thead><tr><th>Mã đơn</th><th>Tổng tiền</th><th>Trạng thái</th></tr></thead><tbody>`;
                     user.orders.slice(0, 5).forEach(order => {
-                        const statusMap = {
-                            1: 'Chờ xử lý',
-                            2: 'Đang xử lý',
-                            3: 'Đang giao',
-                            4: 'Đã giao',
-                            5: 'Đã hủy'
-                        };
-                        ordersHtml += `
-                            <tr>
-                                <td><strong>${order.code}</strong></td>
-                                <td>${order.total_amount?.toLocaleString('vi-VN')} đ</td>
-                                <td>${statusMap[order.status] || 'N/A'}</td>
-                            </tr>
-                        `;
+                        const statusMap = { 1: 'Chờ xử lý', 2: 'Đang xử lý', 3: 'Đang giao', 4: 'Đã giao', 5: 'Đã hủy' };
+                        ordersHtml += `<tr><td><strong>${order.code}</strong></td><td>${order.total_amount?.toLocaleString('vi-VN')} đ</td><td>${statusMap[order.status] || 'N/A'}</td></tr>`;
                     });
-                    ordersHtml += '</tbody></table>';
-                    if (user.orders.length > 5) {
-                        ordersHtml += `<p class="text-muted"><small>... và ${user.orders.length - 5} đơn hàng khác</small></p>`;
-                    }
-                    ordersHtml += '</div>';
+                    ordersHtml += '</tbody></table></div>';
                 } else {
                     ordersHtml = '<p class="text-muted mt-3">Chưa có đơn hàng nào</p>';
                 }
@@ -320,8 +287,7 @@
                             <p><strong>Vai trò:</strong> ${getRoleBadge(user.role)}</p>
                         </div>
                     </div>
-                    ${ordersHtml}
-                `;
+                    ${ordersHtml}`;
 
                 new bootstrap.Modal(document.getElementById('viewUserModal')).show();
             } catch (error) {
@@ -329,7 +295,6 @@
             }
         }
 
-        // Edit user
         async function editUser(id) {
             try {
                 const response = await fetch(`${API_BASE_URL}/users/${id}`);
@@ -347,7 +312,6 @@
             }
         }
 
-        // Update user
         async function updateUser() {
             try {
                 const id = document.getElementById('user-id').value;
@@ -360,16 +324,10 @@
                     return;
                 }
 
-                const data = { 
-                    email: email,
-                    fullname: fullname || null,
-                    role: parseInt(role)
-                };
-
                 const response = await fetch(`${API_BASE_URL}/users/${id}`, {
                     method: 'PUT',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(data)
+                    body: JSON.stringify({ email, fullname: fullname || null, role: parseInt(role) })
                 });
 
                 if (!response.ok) {
@@ -385,14 +343,11 @@
             }
         }
 
-        // Delete user
         async function deleteUser(id) {
             if (!confirm('Bạn có chắc muốn xóa tài khoản này?\n\nLưu ý: Không thể xóa nếu tài khoản có đơn hàng.')) return;
 
             try {
-                const response = await fetch(`${API_BASE_URL}/users/${id}`, {
-                    method: 'DELETE'
-                });
+                const response = await fetch(`${API_BASE_URL}/users/${id}`, { method: 'DELETE' });
 
                 if (!response.ok) {
                     const error = await response.json();
@@ -406,10 +361,7 @@
             }
         }
 
-        // Load on page load
         document.addEventListener('DOMContentLoaded', loadUsers);
-
-        // Search on Enter
         document.getElementById('search-input').addEventListener('keypress', (e) => {
             if (e.key === 'Enter') loadUsers();
         });

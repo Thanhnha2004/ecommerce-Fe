@@ -13,7 +13,7 @@ function renderSliderSection($title, $products, $viewAllLink = '#')
                 <div class="p-2 product-item overflow-auto">
                     <div class="card border border-light text-center p-2 position-relative hover-border-red cursor-pointer">
                         <div class="position-relative">
-                            <img src="../uploads/product/<?= $product['image'] ?>" class="card-img-top img-fluid" />
+                            <img src="http://localhost:8000/storage/<?= $product['image'] ?>" class="card-img-top img-fluid" />
                         </div>
                         <div class="card-body text-start p-2">
                             <div class="d-flex justify-content-start align-items-baseline mb-1">
